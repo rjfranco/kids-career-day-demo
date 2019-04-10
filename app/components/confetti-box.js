@@ -1,90 +1,17 @@
 import Component from '@glimmer/component';
-import computed from '@ember/object';
-
-const PI_2 = 2 * Math.PI;
-
-function drawCircle(x, y, r, style) {
-
-}
 
 function range(start, finish) {
   return (finish - start) * Math.random() + start;
 }
 
-// NUM_CONFETTI = 350
-// COLORS = [[85,71,106], [174,61,99], [219,56,83], [244,92,68], [248,182,70]]
-// PI_2 = 2*Math.PI
-
-// canvas = document.getElementById "world"
-// context = canvas.getContext "2d"
-// window.w = 0
-// window.h = 0
-
-
-// drawCircle = (x,y,r,style) ->
-//   context.beginPath()
-//   context.arc(x,y,r,0,PI_2,false)
-//   context.fillStyle = style
-//   context.fill()
-
-// window.requestAnimationFrame = do ->
-//   window.requestAnimationFrame       ||
-//   window.webkitRequestAnimationFrame ||
-//   window.mozRequestAnimationFrame    ||
-//   window.oRequestAnimationFrame      ||
-//   window.msRequestAnimationFrame     ||
-//   (callback) -> window.setTimeout(callback, 1000 / 60)
-
-
-// class Confetti
-
-//   constructor: ->
-//     @style = COLORS[~~range(0,5)]
-//     @rgb = "rgba(#{@style[0]},#{@style[1]},#{@style[2]}"
-//     @r = ~~range(2,6)
-//     @r2 = 2*@r
-//     @replace()
-
-//   replace: ->
-//     @opacity = 0
-//     @dop = 0.03*range(1,4)
-//     @x = range(-@r2,w-@r2)
-//     @y = range(-20,h-@r2)
-//     @xmax = w-@r
-//     @ymax = h-@r
-//     @vx = range(0,2)+8*xpos-5
-//     @vy = 0.7*@r+range(-1,1)
-
-//   draw: ->
-//     @x += @vx
-//     @y += @vy
-//     @opacity += @dop
-//     if @opacity > 1
-//       @opacity = 1
-//       @dop *= -1
-//     @replace() if @opacity < 0 or @y > @ymax
-//     if !(0 < @x < @xmax)
-//       @x = (@x + @xmax) % @xmax
-//     drawCircle(~~@x,~~@y,@r,"#{@rgb},#{@opacity})")
-
-
-// confetti = (new Confetti for i in [1..NUM_CONFETTI])
-
-// window.step = ->
-//   requestAnimationFrame(step)
-//   context.clearRect(0,0,w,h)
-//   c.draw() for c in confetti
-
-// step()
-
-
 class Confetti {
-  constructor(color, width, height) {
+  constructor(color, width, height, drawCircle) {
     this.color = color;
+    this.drawCircle = drawCircle;
     this.height = height;
     this.rgb = `rgba(${this.color[0]},${this.color[1]},${this.color[2]}`;
-    this.r = ~~range(2,6)
-    this.r2 = 2*this.r
+    this.r = Math.floor(range(2,6));
+    this.r2 = 2*this.r;
     this.width = width;
     this.replace()
   }
@@ -112,34 +39,62 @@ class Confetti {
       
     if (this.opacity < 0 || this.y > this.ymax) this.replace();
     if (!(0 < this.x < this.xmax)) this.x = (this.x + this.xmax) % this.xmax;
-    
-    drawCircle(~~this.x, ~~this.y, this.r, `${this.rgb},${this.opacity})`);
+
+    this.drawCircle(Math.floor(this.x), Math.floor(this.y), this.r, `${this.rgb},${this.opacity})`);
   }
 }
 
 export default class ConfettiBoxComponent extends Component {
+  PI_2 = 2 * Math.PI;
+  confetti = [];
+
   constructor() {
     super(...arguments);
   }
 
-  startAnimation() {
-    console.log('we would theoretically start the animation');
+  startAnimation(canvas, [confettiBox]) {
+    confettiBox.context = canvas.getContext('2d');
+    confettiBox.height = canvas.height;
+    confettiBox.width = canvas.width;
+
+    for (let i = 0; i < confettiBox.args.numberOfConfetti; i++) {
+      let color = confettiBox.color();
+      confettiBox.confetti.push(new Confetti(color, confettiBox.width, confettiBox.height, confettiBox.drawCircle.bind(confettiBox)));
+    }
+
+    confettiBox.step();
   }
 
-  // color: computed('scheme', function() {
-  //   return this.scheme(Math.floor(range(0,5)));
-  // })
+  drawCircle(x, y, r, style) {
+    this.context.beginPath();
+    this.context.arc(x, y, r, 0, this.PI_2, false);
+    this.context.fillStyle = style;
+    this.context.fill();
+  }
 
-  // scheme: computed('shade', function() {
-  //   let shades = {
-  //     pink: [[255, 100, 100], [255, 150, 150], [255, 175, 175], [255, 200, 200], [255, 225, 225]]
-  //   }
+  color() {
+    return this.scheme(Math.floor(range(0,5)));
+  }
 
-  //   if (this.shade) {
-  //     return shades[this.shade];
-  //   }
+  scheme(number) {
+    let colorVariation = this.args.colorVariation;
+    let shades = {
+      grey: [[0, 0, 0], [50, 50, 50], [100, 100, 100], [125, 125, 125], [175, 175, 175]],
+      pink: [[255, 100, 100], [255, 150, 150], [255, 175, 175], [255, 200, 200], [255, 225, 225]]
+    }
 
-  //   return [[0, 0, 0], [50, 50, 50], [100, 100, 100], [125, 125, 125], [175, 175, 175]];
-  // })
-  
+    if (colorVariation) {
+      return shades[colorVariation][number];
+    }
+
+    return shades['grey'][number];
+  }
+
+  step() {
+    requestAnimationFrame(this.step.bind(this));
+    this.context.clearRect(0, 0, this.width, this.height);
+    for (let i = 0; i < this.confetti.length; i++) {
+      this.confetti[i].draw();
+    }
+  }
 }
