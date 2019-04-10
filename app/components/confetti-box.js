@@ -54,8 +54,8 @@ export default class ConfettiBoxComponent extends Component {
 
   startAnimation(canvas, [confettiBox]) {
     confettiBox.context = canvas.getContext('2d');
-    confettiBox.height = canvas.height;
-    confettiBox.width = canvas.width;
+    confettiBox.height = canvas.height = window.innerHeight;
+    confettiBox.width = canvas.width = window.innerWidth;
 
     for (let i = 0; i < confettiBox.args.numberOfConfetti; i++) {
       let color = confettiBox.color();
