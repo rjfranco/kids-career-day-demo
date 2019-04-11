@@ -2,7 +2,7 @@ import Controller from '@ember/controller';
 
 export default class IndexController extends Controller {
   // Available options are:
-  // pink, blue, red, green, grey, purple, yellow, orange, rainbow
+  // pink, blue, red, green, grey, purple, yellow, orange, rainbow, unicorn, mint
   colorVariation = 'pink';
   
   // Try using decimal values!
