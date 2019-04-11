@@ -5,12 +5,12 @@ function range(start, finish) {
 }
 
 class Confetti {
-  constructor(color, width, height, drawCircle) {
+  constructor({ color, width, height, drawCircle, sizeMultiplier }) {
     this.color = color;
     this.drawCircle = drawCircle;
     this.height = height;
     this.rgb = `rgba(${this.color[0]},${this.color[1]},${this.color[2]}`;
-    this.r = Math.floor(range(3,9));
+    this.r = Math.floor(range(3,9) * sizeMultiplier);
     this.r2 = 2 * this.r;
     this.width = width;
     this.replace()
@@ -59,9 +59,17 @@ export default class ConfettiBoxComponent extends Component {
     confettiBox.height = canvas.height = window.innerHeight;
     confettiBox.width = canvas.width = window.innerWidth;
 
+    let confettiOptions = {
+      drawCircle: confettiBox.drawCircle.bind(confettiBox),
+      height: confettiBox.height,
+      sizeMultiplier: confettiBox.args.sizeMultiplier,
+      width: confettiBox.width
+    }
+
     for (let i = 0; i < confettiBox.args.numberOfConfetti; i++) {
       let color = confettiBox.color();
-      confettiBox.confetti.push(new Confetti(color, confettiBox.width, confettiBox.height, confettiBox.drawCircle.bind(confettiBox)));
+      confettiOptions.color = confettiBox.color();
+      confettiBox.confetti.push(new Confetti(confettiOptions));
     }
 
     confettiBox.step();
