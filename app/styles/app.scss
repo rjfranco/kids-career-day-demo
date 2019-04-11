@@ -1,5 +1,37 @@
 @import 'normalize';
+@import 'confetti-box';
 
 body, html {
+  height: 100%;
+  overflow: hidden;
+}
+
+h1 {
+  font-family: sansita-one, sans-serif;
+  font-size: 3rem;
+  font-style: normal;
+  font-weight: normal;
+  margin: 3rem;
+}
+
+p {
+  font-family: source-sans-pro, sans-serif;
+  font-weight: bold;
+  opacity: .75;
+  text-align: center;
+  margin: 3rem;
+  transform: translateY(-5rem);
+}
+
+.content {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }

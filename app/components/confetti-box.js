@@ -10,8 +10,8 @@ class Confetti {
     this.drawCircle = drawCircle;
     this.height = height;
     this.rgb = `rgba(${this.color[0]},${this.color[1]},${this.color[2]}`;
-    this.r = Math.floor(range(2,6));
-    this.r2 = 2*this.r;
+    this.r = Math.floor(range(3,9));
+    this.r2 = 2 * this.r;
     this.width = width;
     this.replace()
   }
@@ -24,7 +24,7 @@ class Confetti {
     this.xmax = this.width - this.r;
     this.ymax = this.height - this.r;
     this.vx = range(0, 2) + 8 * .5 - 5;
-    this.vy = 0.7 * this.r + range(-1, 1);
+    this.vy = .3 * this.r + range(-1, 1);
   }
 
   draw() {
@@ -38,7 +38,9 @@ class Confetti {
     }
       
     if (this.opacity < 0 || this.y > this.ymax) this.replace();
-    if (!(0 < this.x < this.xmax)) this.x = (this.x + this.xmax) % this.xmax;
+    if (!(0 < this.x < this.xmax)) {
+      this.x = (this.x + this.xmax) % this.xmax;
+    }
 
     this.drawCircle(Math.floor(this.x), Math.floor(this.y), this.r, `${this.rgb},${this.opacity})`);
   }
