@@ -67,7 +67,6 @@ export default class ConfettiBoxComponent extends Component {
     }
 
     for (let i = 0; i < confettiBox.args.numberOfConfetti; i++) {
-      let color = confettiBox.color();
       confettiOptions.color = confettiBox.color();
       confettiBox.confetti.push(new Confetti(confettiOptions));
     }
@@ -89,8 +88,10 @@ export default class ConfettiBoxComponent extends Component {
   scheme(number) {
     let colorVariation = this.args.colorVariation;
     let shades = {
+      blue: [[130, 175, 255], [115, 160, 240], [80, 130, 215], [55, 105, 190], [35, 80, 160]],
       grey: [[0, 0, 0], [50, 50, 50], [100, 100, 100], [125, 125, 125], [175, 175, 175]],
-      pink: [[255, 100, 100], [255, 150, 150], [255, 175, 175], [255, 200, 200], [255, 225, 225]]
+      pink: [[255, 195, 225], [255, 150, 205], [255, 100, 180], [255, 55, 160], [255, 0, 130]],
+      purple: [[255, 180, 255], [240, 150, 240], [220, 115, 225], [205, 85, 205], [175, 40, 175]]
     }
 
     if (colorVariation) {
